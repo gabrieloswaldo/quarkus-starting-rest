@@ -1,11 +1,17 @@
 package service;
 
+import dto.BookDTO;
+import enums.BookStatus;
 import model.Book;
 import repositories.BookRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BookService {
@@ -13,23 +19,83 @@ public class BookService {
     @Inject
     BookRepository bookRepository;
 
-    public Book save(){
-        return null;
+    public Book save(Book book){
+        String isbn = UUID.randomUUID().toString();
+        book.setIsbn(isbn);
+        book.setStatusBook(BookStatus.DISPONIVEL.toString());
+        book.setDateRegister(new Date().toString());
+        bookRepository.persistAndFlush(book);
+        return book;
     }
 
     public List<Book> listAll(){
-        return bookRepository.listAll();
+        return bookRepository
+                .findAll()
+                .stream()
+                .filter(b->b.getStatusBook().equals(BookStatus.DISPONIVEL.toString()))
+                .collect(Collectors.toList());
     }
 
     public Integer quantityOfBooks(){
-        return null;
+        return bookRepository
+                .findAll()
+                .stream()
+                .collect(Collectors.toList())
+                .size();
     }
 
-    public Book fetchBookById(Long id){
-        return null;
+    public Optional<Book> fetchBookById(Long id){
+        Optional<Book> fetchId = bookRepository.findByIdOptional(id).stream().findFirst();
+        return Optional.ofNullable(fetchId.orElseThrow());
     }
 
-    public Book fetchBookByIsbn(){
-        return null;
+    public Optional<Book> fetchBookByIsbn(String isbn){
+       Optional<Book> fetch = bookRepository.find("isbn",isbn).stream().findFirst();
+        return Optional.ofNullable(fetch.orElseThrow());
+    }
+
+    private Book findID(Long id) {
+        Optional<Book> p = bookRepository.find("id", id).firstResultOptional();
+        return p.orElseThrow();
+    }
+
+    public Book updateBook(Long id, BookDTO dto){
+        Book book = findID(id);
+        book.setTitle(dto.getTitle());
+        book.setAuthor(dto.getAuthor());
+        book.setYearOfPublication(dto.getYearOfPublication());
+        book.setGenre(dto.getGenre());
+        book.setStatusBook(dto.getStatusBook());
+        book.setDateRegister(new Date().toString());
+
+        return book;
+    }
+
+    public Optional<Book> changeStatus(Long id, String status){
+
+        Optional<Book> fetchStatus = bookRepository.find("id", id).stream().findFirst();
+
+        if (status == BookStatus.DISPONIVEL.toString()){
+            fetchStatus.get().setId(id);
+            fetchStatus.get().setStatusBook(status);
+            bookRepository.persistAndFlush(fetchStatus.get());
+        }else {
+            fetchStatus.get().setId(id);
+            fetchStatus.get().setStatusBook(status);
+            bookRepository.persistAndFlush(fetchStatus.get());
+        }
+
+        return fetchStatus;
+    }
+
+    public List<Book> findBookStatus(String status){
+
+        List<Book> listBookStatus = bookRepository
+                .find("statusBook", status)
+                .stream()
+                .filter(b->b.getStatusBook().contains(status))
+                .collect(Collectors.toList());
+
+        return listBookStatus;
     }
 }
