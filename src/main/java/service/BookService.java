@@ -98,4 +98,8 @@ public class BookService {
 
         return listBookStatus;
     }
+
+    public String verify(){
+        return null;
+    }
 }
