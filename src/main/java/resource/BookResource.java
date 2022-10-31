@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.UnknownHostException;
 
 @Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +42,15 @@ public class BookResource {
         return Response
                 .status(Response.Status.OK)
                 .entity(service.listAll())
+                .build();
+    }
+
+    @GET
+    @Path("/verify")
+    public Response verify() throws UnknownHostException {
+        return Response
+                .status(Response.Status.OK)
+                .entity(service.verify())
                 .build();
     }
 

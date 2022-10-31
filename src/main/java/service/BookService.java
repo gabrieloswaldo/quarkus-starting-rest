@@ -7,6 +7,8 @@ import repositories.BookRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +101,7 @@ public class BookService {
         return listBookStatus;
     }
 
-    public String verify(){
-        return null;
+    public String verify() throws UnknownHostException {
+        return "Verify Date: "+ new Date() + " Address: "+ InetAddress.getLocalHost();
     }
 }
