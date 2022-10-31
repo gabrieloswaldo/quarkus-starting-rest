@@ -19,8 +19,8 @@ public class BookMock {
     public static Book bookMock(Long id){
         return Book.builder()
                 .id(id)
-                .title("Title")
-                .author("Author")
+                .title("TITTLE")
+                .author("AUTHOR")
                 .yearOfPublication(2000)
                 .isbn("ISBN")
                 .genre("GENRE")
