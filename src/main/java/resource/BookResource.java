@@ -1,7 +1,6 @@
 package resource;
 
 import dto.BookDTO;
-import enums.BookStatus;
 import model.Book;
 import service.BookService;
 
@@ -90,5 +89,4 @@ public class BookResource {
                 .entity(service.changeStatus(id, status))
                 .build();
     }
-
 }
