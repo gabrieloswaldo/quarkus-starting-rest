@@ -3,6 +3,7 @@ package service;
 import dto.BookDTO;
 import enums.BookStatus;
 import model.Book;
+import model.Verify;
 import repositories.BookRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -42,6 +43,7 @@ public class BookService {
         return bookRepository
                 .findAll()
                 .stream()
+                .filter(b->b.getStatusBook().equals("DISPONIVEL"))
                 .collect(Collectors.toList())
                 .size();
     }
@@ -101,7 +103,10 @@ public class BookService {
         return listBookStatus;
     }
 
-    public String verify() throws UnknownHostException {
-        return "Verify Date: "+ new Date() + " Address: "+ InetAddress.getLocalHost();
+    public Verify verify() throws UnknownHostException {
+        return Verify.builder()
+                .date(new Date().toString())
+                .address(InetAddress.getLocalHost().toString())
+                .build();
     }
 }
