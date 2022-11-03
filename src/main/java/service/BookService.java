@@ -2,6 +2,7 @@ package service;
 
 import dto.BookDTO;
 import enums.BookStatus;
+import exceptions.BusinessException;
 import model.Book;
 import model.Verify;
 import repositories.BookRepository;
@@ -50,17 +51,17 @@ public class BookService {
 
     public Optional<Book> fetchBookById(Long id){
         Optional<Book> fetchId = bookRepository.findByIdOptional(id).stream().findFirst();
-        return Optional.ofNullable(fetchId.orElseThrow());
+        return Optional.ofNullable(fetchId.orElseThrow(()-> new BusinessException("ID NOT FOUND OR NOT EXISTS")));
     }
 
     public Optional<Book> fetchBookByIsbn(String isbn){
        Optional<Book> fetch = bookRepository.find("isbn",isbn).stream().findFirst();
-        return Optional.ofNullable(fetch.orElseThrow());
+        return Optional.ofNullable(fetch.orElseThrow(()-> new BusinessException("ISBN NOT FOUND")));
     }
 
     private Book findID(Long id) {
         Optional<Book> p = bookRepository.find("id", id).firstResultOptional();
-        return p.orElseThrow();
+        return p.orElseThrow(()-> new BusinessException("ID NOT FOUND OR NOT EXISTS"));
     }
 
     public Book updateBook(Long id, BookDTO dto){
@@ -78,6 +79,10 @@ public class BookService {
     public Optional<Book> changeStatus(Long id, String status){
 
         Optional<Book> fetchStatus = bookRepository.find("id", id).stream().findFirst();
+
+        if (fetchStatus.isEmpty() || fetchStatus.get().getId() == null){
+            throw new BusinessException("BOOK NOT UPDATED");
+        }
 
         if (status == BookStatus.DISPONIVEL.toString()){
             fetchStatus.get().setId(id);
@@ -99,6 +104,10 @@ public class BookService {
                 .stream()
                 .filter(b->b.getStatusBook().contains(status))
                 .collect(Collectors.toList());
+
+        if (listBookStatus.isEmpty()){
+            throw new BusinessException("BOOK STATUS NOT FOUND [LIST IS EMPTY]");
+        }
 
         return listBookStatus;
     }

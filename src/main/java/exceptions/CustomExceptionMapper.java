@@ -15,11 +15,11 @@ public class CustomExceptionMapper implements ExceptionMapper<Exception> {
 
         MessageError messageError = new MessageError();
         if (exception instanceof BusinessException){
-            messageError.setMessageReturn(exception.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(messageError).build();
+            messageError.setMessage(exception.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(messageError).build();
         }
 
-        messageError.setMessageReturn(exception.getMessage());
-        return Response.status(Response.Status.NOT_FOUND).entity(messageError).build();
+        messageError.setMessage(exception.getMessage());
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(messageError).build();
     }
 }
