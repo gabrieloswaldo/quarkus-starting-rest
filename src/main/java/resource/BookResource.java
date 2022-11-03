@@ -1,6 +1,8 @@
 package resource;
 
 import dto.BookDTO;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import model.Book;
 import service.BookService;
 
@@ -74,6 +76,8 @@ public class BookResource {
 
     @GET
     @Path("/qty")
+    @Counted(description = "Retorna a quantidade de livros disponível")
+    @Timed(description = "Duração de qty de livros disponíveis")
     public Response quantityOfBooks(){
         return Response
                 .status(Response.Status.OK)
